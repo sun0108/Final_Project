@@ -10,10 +10,14 @@ from functools import wraps
 
 import pymysql
 import secrets
+import os
 
-
-conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser, secrets.dbpass, secrets.dbhost, secrets.dbname)
-
+dbuser=os.environ.get('DBUSER')
+dbpass=os.environ.get('DBPASS')
+dbhost=os.environ.get('DBHOST')
+dbname=os.environ.get('DBNAME')
+#conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser, secrets.dbpass, secrets.dbhost, secrets.dbname)
+conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(dbuser,dbpass,dbhost,dbname)
 # Open database connection
 #dbhost = secrets.dbhost
 #dbuser = secrets.dbuser
@@ -30,7 +34,7 @@ login.login_message_category = 'danger' # sets flash category for the default me
 
 
 app.config['SECRET_KEY']='SuperSecretKey'
-# import os
+#import os
 # = os.environ.get('SECRET_KEY')
 
 
