@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block body %}
+<div>
+    <h3>{{legend}}</h3>
+    <br>
+    <button type="button" class="btn btn-dark">
+        <a class="text-white bg-dark" href="{{url_for('.databasemanipulation')}}">Back to Database</a></button>
+    <form method='POST' action="">
+        <table class="table-responsive" class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">InstanceID</th>
+                    <th scope="col">PokemonIndex</th>
+                    <th scope="col">PokemonNAME</th>
+                    <th scope="col">Generation</th>
+                    <th scope="col">Type1</th>
+                    <th scope="col">Type2</th>
+                    <th scope="col">Skill1</th>
+                    <th scope="col">Skill2</th>
+                    <th scope="col">Skill3</th>
+                    <th scope="col">Skill4</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {{ form.csrf_token }}
+                    <td>{{form.InstanceID(size=5, readonly=true)}}</td>
+                    <td>{{form.PokemonIndex(size=20)}}</td>
+                    <td>{{form.PokemonName(size=20)}}</td>
+                    <td>{{form.Generation(size=20)}} </td>
+                    <td>{{form.Type1(size=20)}} </td>
+                    <td>{{form.Type2(size=20)}} </td>
+                    <td>{{form.Skill1(size=20)}} </td>
+                    <td>{{form.Skill2(size=20)}} </td>
+                    <td>{{form.Skill3(size=20)}} </td>
+                    <td>{{form.Skill4(size=20)}} </td>
+                </tr> 
+            </tbody>
+            </table>
+        <input type="submit" value="Save">
+    
+    </form>
+
+
+</div>
+{% endblock %}
+class="table-responsive"
+"table table-hover"

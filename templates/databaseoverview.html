@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<h3>{{legend}}</h3>
+<form class="form-inline my-2 my-lg-0" method="POST">
+    <input class="form-control mr-sm-2" type="search" name="search_string" autofocus placeholder="Search" aria-label="Search">
+    <button class="text-white bg-dark" formaction="/search_overview" type="submit">Search</button>
+  </form>
+  <br>
+    <button type="button" class="btn btn-dark">
+        <a class="text-white bg-dark" href="{{url_for('.databaseoverview')}}">Back to Database</a></button>
+
+{% if pokemontable %}
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">PokemonIndex</th>
+            <th scope="col">PokemonName</th>
+            <th scope="col">Generation</th>
+            <th scope="col">Type1</th>
+            <th scope="col">Type2</th>
+            <th scope="col">Skill1</th>
+            <th scope="col">Skill2</th>
+            <th scope="col">Skill3</th>
+            <th scope="col">Skill4</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in pokemontable %}
+        <tr>
+            <td> {{row.PokemonIndex}}</td>
+            <td> {{row.PokemonName}}</td>
+            <td> {{row.Generation}}</td>
+            <td> {{row.Type1}}</td>
+            <td> {{row.Type2}}</td>
+            <td> {{row.Skill1}}</td>
+            <td> {{row.Skill2}}</td>
+            <td> {{row.Skill3}}</td>
+            <td> {{row.Skill4}}</td>
+        </tr>
+        {% endfor %}  
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

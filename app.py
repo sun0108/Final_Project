@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.urls import url_parse
 from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
 from functools import wraps
-
+from sqlalchemy import or_
 import pymysql
 import secrets
 import os
@@ -34,6 +34,8 @@ login.login_message_category = 'danger' # sets flash category for the default me
 
 
 app.config['SECRET_KEY']='SuperSecretKey'
+app.config['SQLALCHEMY_DATABASE_URI'] = conn
+db=_BaseSQLAlchemy(app)
 #import os
 # = os.environ.get('SECRET_KEY')
 
@@ -44,6 +46,157 @@ class SQLAlchemy(_BaseSQLAlchemy):
         super(SQLAlchemy, self).apply_pool_defaults(app, options)
         options["pool_pre_ping"] = True
 # <-- MWC
+
+
+
+
+# Pokemon database function 
+class ysun95_pokemondb(db.Model):
+    InstanceID = db.Column(db.Integer,primary_key=True)
+    PokemonIndex=db.Column(db.String(255))
+    PokemonName=db.Column(db.String(255))
+    Generation=db.Column(db.String(255))
+    Type1=db.Column(db.String(255))
+    Type2=db.Column(db.String(255))
+    Skill1=db.Column(db.String(255))
+    Skill2=db.Column(db.String(255))
+    Skill3=db.Column(db.String(255))
+    Skill4=db.Column(db.String(255))
+
+
+
+class pokemondb(FlaskForm):
+    InstanceID=IntegerField('InstanceID :')
+    PokemonIndex=StringField('National index number:',validators=[DataRequired()])
+    PokemonName=StringField('name:',validators=[DataRequired()])
+    Generation=StringField('Generation:',validators=[DataRequired()])
+    Type1=StringField('Generation:',validators=[DataRequired()])
+    Type2=StringField('Generation:',validators=[DataRequired()])
+    Skill1=StringField('Generation:',validators=[DataRequired()])
+    Skill2=StringField('Generation:',validators=[DataRequired()])
+    Skill3=StringField('Generation:',validators=[DataRequired()])
+    Skill4=StringField('Generation:',validators=[DataRequired()])
+
+
+@app.route('/databaseoverview')
+def databaseoverview():
+    all_pokemons=ysun95_pokemondb.query.all()
+    return render_template('databaseoverview.html',pokemontable=all_pokemons,pageTitle='Sun\'s favourite pokemons',legend="Database Overview")
+
+
+@app.route('/databasemanipulation')
+def databasemanipulation():
+    all_pokemons=ysun95_pokemondb.query.all()
+    return render_template('databasemanipulation.html',pokemontable=all_pokemons,pageTitle='Sun\'s favourite pokemons',legend="Database Overview")
+
+@app.route('/pokemons/<int:InstanceID>',methods=['GET','POST'])
+def get_pokemon(InstanceID):
+    pokemons=ysun95_pokemondb.query.get_or_404(InstanceID)
+    return render_template('databasemanipulationdetail.html',form=pokemons,pageTitle="Pokemons details", legend='Pokemon Details')
+
+@app.route('/delete_pokemon/<int:InstanceID>',methods=['GET','POST'])
+def delete_pokemon(InstanceID):
+    if request.method=='POST':    
+        pokemon=ysun95_pokemondb.query.get_or_404(InstanceID)
+        db.session.delete(pokemon)
+        db.session.commit()
+        return redirect('/databasemanipulation')
+    else: 
+        return redirect('/databasemanipulation')
+
+    
+@app.route('/pokemons/<int:InstanceID>/update',methods=['GET','POST'])
+def update_pokemon(InstanceID):
+    pokemons=ysun95_pokemondb.query.get_or_404(InstanceID)
+    form=pokemondb()
+    
+    if form.validate_on_submit():
+        pokemons.PokemonIndex=form.PokemonIndex.data
+        pokemons.PokemonName=form.PokemonName.data
+        pokemons.Generation=form.Generation.data
+        pokemons.Type1=form.Type1.data
+        pokemons.Type2=form.Type2.data
+        pokemons.Skill1=form.Skill1.data
+        pokemons.Skill2=form.Skill2.data
+        pokemons.Skill3=form.Skill3.data
+        pokemons.Skill4=form.Skill4.data
+        db.session.commit()
+        return redirect(url_for('get_pokemon',InstanceID=pokemons.InstanceID))
+    form.InstanceID.data=pokemons.InstanceID
+    form.PokemonName.data=pokemons.PokemonName
+    form.PokemonIndex.data=pokemons.PokemonIndex
+    form.Generation.data=pokemons.Generation
+    form.Type1.data=pokemons.Type1
+    form.Type2.data=pokemons.Type2
+    form.Skill1.data=pokemons.Skill1
+    form.Skill2.data=pokemons.Skill2
+    form.Skill3.data=pokemons.Skill3
+    form.Skill4.data=pokemons.Skill4
+    return render_template('databasemanipulationupdate.html',form=form,pageTitle='Update pokemon',legend='Updata a pokemon')
+
+@app.route('/search',methods=['GET','POST'])
+def search():
+        if request.method=="POST":
+            form=request.form
+            search_value=form['search_string']
+            search="%{}%".format(search_value)
+            results=ysun95_pokemondb.query.filter(or_(ysun95_pokemondb.PokemonName.like(search),
+                                                          ysun95_pokemondb.PokemonIndex.like(search),
+                                                          ysun95_pokemondb.Generation.like(search),
+                                                          ysun95_pokemondb.Type1.like(search),
+                                                          ysun95_pokemondb.Type2.like(search),
+                                                          ysun95_pokemondb.Skill1.like(search),
+                                                          ysun95_pokemondb.Skill2.like(search),
+                                                          ysun95_pokemondb.Skill3.like(search),
+                                                          ysun95_pokemondb.Skill4.like(search))).all()
+            return render_template('databasemanipulation.html',pokemontable=results,pageTitle="Sun's Pokemon index",legend="Search results")
+        else:
+            return redirect('/')
+
+
+
+@app.route('/search_overview',methods=['GET','POST'])
+def search_overview():
+        if request.method=="POST":
+            form=request.form
+            search_value=form['search_string']
+            search="%{}%".format(search_value)
+            results=ysun95_pokemondb.query.filter(or_(ysun95_pokemondb.PokemonName.like(search),
+                                                          ysun95_pokemondb.PokemonIndex.like(search),
+                                                          ysun95_pokemondb.Generation.like(search),
+                                                          ysun95_pokemondb.Type1.like(search),
+                                                          ysun95_pokemondb.Type2.like(search),
+                                                          ysun95_pokemondb.Skill1.like(search),
+                                                          ysun95_pokemondb.Skill2.like(search),
+                                                          ysun95_pokemondb.Skill3.like(search),
+                                                          ysun95_pokemondb.Skill4.like(search))).all()
+            return render_template('databaseoverview.html',pokemontable=results,pageTitle="Sun's Pokemon index",legend="Search results")
+        else:
+            return redirect('/')
+
+
+@app.route('/addpokemon',methods=['GET','POST'])
+def addpokemon():
+    form=pokemondb()
+    if form.validate_on_submit():
+        pokemon=ysun95_pokemondb(PokemonIndex=form.PokemonIndex.data,PokemonName=form.PokemonName.data,Generation=form.Generation.data,Type1=form.Type1.data,
+        Type2=form.Type2.data,Skill1=form.Skill1.data,Skill2=form.Skill2.data,Skill3=form.Skill3.data,Skill4=form.Skill4.data)
+        db.session.add(pokemon)
+        db.session.commit()
+        return redirect('/databasemanipulation')
+    return render_template('addpokemon.html',form=form,pageTitle='Add pokemons')
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = conn

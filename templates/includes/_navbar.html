@@ -8,16 +8,17 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 
-            <a class="navbar-brand" href="/">Flask App</a>
-
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
+            <a class="navbar-brand" href="/">Sun's Pokemon Database</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
                     <a class="nav-link" href="/about">About</a>
-                </li>
-            </ul>
+                  </li>
+                </ul>
 
             <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                 {% if current_user.is_anonymous%}
@@ -35,7 +36,7 @@
                     <a class="nav-link" href="/control_panel">Control Panel</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin_test">Admin_Test_Page</a>
+                    <a class="nav-link" href="/databasemanipulation">Database Manipulation</a>
                 </li>
                 {% endif %}
 
@@ -44,16 +45,12 @@
                     <a class="nav-link" href="/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/user_test">User_Test_Page</a>
+                    <a class="nav-link" href="/databaseoverview">Database Overview</a>
                 </li>    
                 {% endif %}
 
                 <li class="nav-item">
                     <a class="nav-link" href="/account">Account</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/guest_test">Guest_Test_Page</a>
                 </li>
                 
                 <li class="nav-item">
